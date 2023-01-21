@@ -38,7 +38,7 @@ app.layout = html.Div(
                             },
                         ),
                         html.Img(
-                            src=app.get_asset_url("logo-politie (1).png"),
+                            src=app.get_asset_url("logo-politie.png"),
                             id="plotly-image1",
                             style={
                                 "height": "100px",
