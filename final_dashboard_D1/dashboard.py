@@ -4,6 +4,9 @@ import pandas as pd
 import plotly.express as px
 from dash import html, dcc
 from dash.dependencies import Input, Output
+import numpy as np
+from datetime import datetime
+import re
 
 app = dash.Dash(
     __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}],
@@ -158,14 +161,108 @@ app.layout = html.Div(
 
 #-------------------------------
 #Helper functions
-# def filter_dataframe(df, well_statuses, well_types, year_slider):
-#     dff = df[
-#         df["Well_Status"].isin(well_statuses)
-#         & df["Well_Type"].isin(well_types)
-#         & (df["Date_Well_Completed"] > dt.datetime(year_slider[0], 1, 1))
-#         & (df["Date_Well_Completed"] < dt.datetime(year_slider[1], 1, 1))
-#     ]
-#     return dff
+def search_drug_pattern(search_word):
+    '''creates regex search pattern from a search word
+    for example 3mmc search will look for
+    3mmc 3-mmc 3 mmc and 3MMC 3 MMC 3-MMC
+    '''
+    search_word = search_word.strip()  # remove leadning and trailing white spaces
+    pattern = r'\s+'  # one white space or more
+    search_word = re.sub(pattern, "-", search_word)
+    pattern = r'([0-9]+)'  # one dash or more
+    search_word = re.sub(pattern, r"\1-", search_word)
+    pattern = r'-+'  # one dash or more
+    search_word = re.sub(pattern, "-", search_word)
+
+    pattern = search_word.replace("-", "\s*\-*")
+    pattern = '\\b' + pattern + '\\b'
+    pattern = re.compile(pattern, flags=re.IGNORECASE)
+    return pattern
+
+
+# combine three sources of drugsforum.nl and return df
+def get_nl_df():
+    df1 = pd.read_csv('nl_corpus/drugs_generaldrugsforumnl_threads.csv',
+                      lineterminator='\n')
+    df2 = pd.read_csv('nl_corpus/research_chemicalsdrugsforumnl_threads.csv')
+    df3 = pd.read_csv('nl_corpus/trip_reportsdrugsforumnl_threads.csv',
+                      lineterminator='\n')
+    return pd.concat([df1, df2, df3], axis=0)
+
+
+def fill_missing_months(drug_df, beg_year, end_year):
+    #    beg_year, end_year = 2008, 2022
+    beg_month, end_month = 1, 12
+    for year in range(beg_year, end_year + 1):
+        for month in range(beg_month, end_month + 1):
+            if month < 10:
+                month_str = '0' + str(month)
+            else:
+                month_str = str(month)
+            month_year = str(year) + '-' + month_str
+            if month_year in drug_df['month-year'].unique():
+                # print(month_year)
+                continue
+            new_row = pd.DataFrame({
+                'month': [month_str],
+                'year': [str(year)],
+                'month-year': [month_year],
+                'comments': [0],
+                'views': [0],
+                'url': [''],
+                'title': ['something'],
+                'username': ['something]'],
+                'user_url': [''],
+                'thread_id': [0],
+                'forum': [''],
+            }, index=[len(drug_df)])
+            drug_df = drug_df.append(new_row)
+    return drug_df
+
+
+def search_drug(drug, beg_year, end_year):
+    df = get_nl_df()
+    drug_df = pd.DataFrame(columns=df.columns)
+    df = df[df['date'] != 'something']
+    df['title'] = df['title'].str.lower()
+    df['content'] = df['content'].str.lower()
+
+    drug_name = drug.lower()
+    drug_pattern = search_drug_pattern(drug_name)
+    t_df = df[df['title'].str.contains(pat=drug_pattern)]
+    c_df = df[df['title'].str.contains(pat=drug_pattern)]
+    tc_df = pd.concat([t_df, c_df]).drop_duplicates().reset_index(drop=True)
+    drug_df = pd.concat([drug_df, tc_df]).drop_duplicates().reset_index(drop=True)
+
+    drug_df['month'] = drug_df['date'].apply(lambda x: int(x.split('-')[1]))
+    drug_df['year'] = drug_df['date'].apply(lambda x: int(x.split('-')[0]))
+    drug_df['month-year'] = drug_df['date'].apply(lambda x: x.split('-')[0] + '-' + x.split('-')[1])
+
+    # filter by year given through dashboard
+    drug_df = drug_df[(drug_df['year'] >= beg_year) & (drug_df['year'] <= end_year)]
+
+    drug_df = fill_missing_months(drug_df, beg_year, end_year)
+
+    data = drug_df.sort_values(by=['month-year'], ascending=True)
+
+    data['views'] = data['views'].astype('int')
+    data['comments'] = data['comments'].astype('int')
+
+    data['month-year'] = data['month-year'].apply(lambda x: datetime.strptime(x, "%Y-%m"))
+    data['freq'] = data['views'].map(lambda x: 0 if x == 0 else 1)
+
+    data = data.drop(['thread_id', 'forum', 'title', 'content', 'url', 'username', 'user_id', 'user_url', 'date']
+                     , axis=1)
+
+    agg_data = pd.DataFrame()
+    agg_data['views'] = data.groupby(['month-year'])['views'].sum().reset_index()['views']
+    agg_data['month-year'] = data.groupby(['month-year'])['freq'].sum().reset_index()['month-year']
+    data = agg_data
+
+    data['moving-avg-views'] = data['views'].rolling(5).mean()
+    data['moving-avg-views'] = data['moving-avg-views'].fillna(0)
+
+    return data
 
 #-------------------------------
 #CALLBACKS
@@ -194,16 +291,21 @@ def update_output(value):
 
 #graph -> add selector as input / add or function between search field and selector (if another value is selected set the other one to none
 @app.callback(
-    [Output("test_graph", "figure"), Output("test_graph1", "figure"), Output("test_graph2", "figure"), Output("test_graph3", "figure")],
+    # [Output("test_graph", "figure"), Output("test_graph1", "figure"), Output("test_graph2", "figure"), Output("test_graph3", "figure")],
+    Output("test_graph", "figure"),
     [Input('range_slider', 'value'), Input("input1", "value")])
 def update_graph(input_range_slider, input_searchfield):
     print("min:", input_range_slider[0], "max:", input_range_slider[1], "search field:", input_searchfield)
     #create corresponding dataframes (df1,df2,df3,df4)
-    fig_test = px.line(df, x="month-year", y="moving-avg-views", title='Popularity')
-    fig_test1 = px.bar(df, x="month-year", y="moving-avg-views", title='Popularity1')
-    fig_test2 = px.scatter(df, x="month-year", y="moving-avg-views", title='Popularity2')
-    fig_test3 = px.line(df, x="month-year", y="moving-avg-views", title='Popularity3')
-    return fig_test, fig_test1, fig_test2, fig_test3
+    begin_year = input_range_slider[0]
+    end_year = input_range_slider[1]
+    df1 = search_drug(input_searchfield, begin_year, end_year)
+    fig_test = px.line(df1, x="month-year", y="moving-avg-views", title='Popularity')
+    # fig_test1 = px.bar(df2, x="month-year", y="moving-avg-views", title='Popularity1')
+    # fig_test2 = px.scatter(df3, x="month-year", y="moving-avg-views", title='Popularity2')
+    # fig_test3 = px.line(df4, x="month-year", y="moving-avg-views", title='Popularity3')
+    # return fig_test, fig_test1, fig_test2, fig_test3
+    return fig_test
 
 
 # Main
