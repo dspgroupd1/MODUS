@@ -2,6 +2,25 @@ import pandas as pd
 import re
 import numpy as np
 import pwlf
+drug_kwrds = {'4-FA' : '4-FA|4FMP', 
+              '4-MMC': '4-MMC|mephedrone | mefedron',
+              '6-ABP': '6-APB| Benzofury| Benzo Fury',
+              'A-PHP'  : 'alpha-PHP|α-PHP|a-php',
+              'Phenibut': 'Phenibut|fenibut',
+
+             }
+def function_find_pattern(string_to_search, dict_of_kwrds):
+    r = re.compile('\\b'+string_to_search.strip()+'\\b', flags=re.I)
+    newlist = list(filter(lambda elem: r.search(elem[1]), dict_of_kwrds.items()))
+    if len(newlist) == 0:
+        return string_to_search
+    else:
+        return dict_of_kwrds[newlist[0][0]]
+
+assert function_find_pattern('Mefedron', drug_kwrds)=='4-MMC|mephedrone | mefedron', 'didn''t find correct search words'
+assert function_find_pattern('mefe', drug_kwrds)=='mefe', 'didn''t find correct search words'
+assert function_find_pattern('ZZZZ', drug_kwrds)=='ZZZZ', 'didn''t find correct search words'
+
 
 def search_drug_pattern(search_word):
     '''creates regex search pattern from a search word 
@@ -17,12 +36,15 @@ def search_drug_pattern(search_word):
     search_word = re.sub(pattern,"-", search_word)
  
     pattern = search_word.replace("-","\s*\-*")
-    pattern = re.compile(pattern, flags=re.IGNORECASE)       
+    pattern = pattern.replace("+","\+")
+    pattern = '\\b'+pattern+'\\b'
+    pattern = re.compile(pattern, flags=re.IGNORECASE)  
+
     return pattern
 
 #if condition returns False, AssertionError is raised:
 # UNIT TEST 
-test=pd.DataFrame(data={'text':['3-mmc 3  mmc 3MMC https://3mmc.sfsdf.sfdsf.sdfsf 3 mmc']})
+test=pd.DataFrame(data={'text':['3-mmc 3  mmc 3mm 3MMC https://3mmc.sfsdf.sfdsf.sdfsf 3 mmc']})
 test['text']=test['text'].str.replace(r'http\S+', '', regex=True, flags=re.IGNORECASE)
 pattern = search_drug_pattern('3 -mmc')
 x = test['text'].str.count(pattern)
@@ -65,7 +87,7 @@ def piecewise_lin_fit(data, field, number_of_breaks=12):
     Y = moving_average(data, field, window=4)
     output['average'] = Y
     output.reset_index(inplace=True)
-    output['year_month'] = data.index
+    output[data.index.name] = data.index
 
     model = pwlf.PiecewiseLinFit(X, Y)
     model.fit(number_of_breaks)
