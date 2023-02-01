@@ -18,30 +18,39 @@ https://drive.google.com/file/d/1gCj0Ryc9wiOV1TBZyrJDHAIe8f3Lpejl/view?usp=shari
 ## directory and file structure
 
 ```
-├── code   		- code of scrapers and different tools  
-│   ├── scrapers  
-│   |   ├── drugsforum  
-│   |   ├── reddit  
-│   |   └── vendors
-│   └── analysis
-|       └── drugsforum
-|
-├── corpus              - output from drug forums  
-│   ├── forums  
-│   │   └── drugsforum  
-│   │       └── threads  
-│   └── trimbos  
-├── final_dashboard_D1 - dashboard   
-│   ├── assets  
-│   ├── data  
-│   └── nl_corpus  
-└── literature_review  - list of reviewed articles and their contents 
+
+├── code                   - code of scrapers and different tools
+│   ├── analysis
+│   │   ├── timeseries
+│   │   └── timeseries_info
+│   └── scrapers
+│       ├── drugsforum
+│       ├── reddit
+│       ├── telegram
+│       └── vendors
+├── corpus                 - output from drug forums
+│   ├── forums
+│   │   ├── drugsforumInfo
+│   │   │   ├── comments
+│   │   │   └── threads
+│   │   └── drugsforumNL
+│   │       ├── comments
+│   │       └── threads
+│   └── trimbos
+├── final_dashboard_D1
+│   ├── assets
+│   ├── data
+│   └── nl_corpus
+└── literature_review      - list of reviewed articles and their contents
+
+
+
 ```
 In order to run the dashboard, run the following command:  
 ``` python final_dashboard_D1/dashboard.py ```
 
 In order to update data sets run the following:   
-    reddit update      : ```python code/scrapers/reddit/reddit-scraper.ipynb```   
+    reddit update      : ```run jupyter notebook code/scrapers/reddit/reddit-scraper.ipynb```   
     list of nps update : ```python code/scrapers/vendors/combine_csv.ipynb```  
     drugsforum.nl update  : ```cd final_dashboard_D1/nl_corpus | python drugsforum-nl.py```
 
