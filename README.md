@@ -35,7 +35,7 @@ https://drive.google.com/file/d/1gCj0Ryc9wiOV1TBZyrJDHAIe8f3Lpejl/view?usp=shari
 │   ├── assets  
 │   ├── data  
 │   └── nl_corpus  
-└── literature_review  - list of reviewed articles and there contents 
+└── literature_review  - list of reviewed articles and their contents 
 ```
 In order to run the dashboard, run the following command:  
 ``` python final_dashboard_D1/dashboard.py ```
