@@ -16,12 +16,12 @@ https://drive.google.com/file/d/1gCj0Ryc9wiOV1TBZyrJDHAIe8f3Lpejl/view?usp=shari
 ## directory and file structure
 
 
-├── code
+├── code   		- code of scrapers and different tools
 │   └── scrapers
 │       ├── drugsforum
 │       ├── reddit
 │       └── vendors
-├── corpus
+├── corpus              - output from drug forums
 │   ├── forums
 │   │   └── drugsforum
 │   │       └── threads
@@ -33,10 +33,8 @@ https://drive.google.com/file/d/1gCj0Ryc9wiOV1TBZyrJDHAIe8f3Lpejl/view?usp=shari
 └── literature_review
 
 
-In order to update data sets run the follwing:
+In order to update data sets run the following:
 
-		- [search-scraper.ipynb](./code/scrapers/reddit/search-scraper.ipynb)
-		- [vendors](./code/scrapers/vendors)
-		- [drugsforum-nl.py](./code/scrapers/drugsforum/drugsforum-nl.py) 
-- corpus
-	- [drugsforum](./corpus/forums/drugsforum)
+ reddit update      - code/scrapers/reddit/reddit-scraper.ipynb
+ list of nps update - code/scrapers/vendors/combine_csv.ipynb
+ drugsforum update  - code/scrapers/drugsforum/drugsforum-nl.py
