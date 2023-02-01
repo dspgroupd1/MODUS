@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# In[1]:
+
+
 import re
 from datetime import date
 import pickle
@@ -38,11 +41,4 @@ def search_drug(drug_df=reddit_df, drug='', beg_year=2012, end_year=2022):
     agg_data['moving-avg-mentions'] = moving_average(agg_data, 'contains', window=5)
 
 
-    return agg_data    
-
-
-
-
-
-
-
+    return agg_data.reset_index()
