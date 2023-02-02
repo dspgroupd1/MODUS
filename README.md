@@ -41,15 +41,15 @@ the version of pandas supported is 1.4.2
 │   └── trimbos
 ├── final_dashboard_D1
 │   ├── assets
-│   ├── data
 │   └── nl_corpus
 └── literature_review      - list of reviewed articles and their contents
 
-
-
 ```
-In order to run the dashboard, run the following command:  
-``` python final_dashboard_D1/dashboard.py ```
+
+
+In order to run the dashboard, run the following command, loading time is about 20 min  
+1) ```cd final_dashboard_D1```
+2) ```python dashboard.py ```
 
 In order to update data sets run the following:   
     reddit update      : ```run jupyter notebook code/scrapers/reddit/reddit-scraper.ipynb```   
