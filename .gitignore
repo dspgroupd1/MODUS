@@ -12,6 +12,9 @@ TXT/
 node_modules/
 dist/
 
+# pkl
+*.pkl
+*.pkl.bkp
 # Compiled Java class files
 *.class
 

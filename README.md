@@ -9,10 +9,12 @@
 
 ## Data Sets
 
-In order to use the dahsboard the inital datasets should be first downloaded from the  
+In order to use the dahsboard the inital dataset should be first downloaded from the  
 https://drive.google.com/file/d/1gCj0Ryc9wiOV1TBZyrJDHAIe8f3Lpejl/view?usp=sharing
+and saved into ```./final_dashboard_D1```
 
-
+## requirements
+the version of pandas supported is 1.4.2
 
 
 ## directory and file structure
