@@ -551,7 +551,7 @@ there.
     width: 49.75%;
   }
   .seven.columns {
-    width: calc(100% * 7 / 12);
+    width: calc(100% * 13 / 12);
   }
 }
 

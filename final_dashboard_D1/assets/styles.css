@@ -18,12 +18,12 @@ body {
 }
 
 .pretty_container {
-  border-radius: 5px;
+  border-radius: 10px;
   background-color: #f9f9f9;
-  margin: 10px;
+  margin: 20px;
   padding: 15px;
   position: relative;
-  box-shadow: 2px 2px 2px lightgrey;
+  box-shadow: 4px 4px 4px lightgrey;
 }
 
 .bare_container {
