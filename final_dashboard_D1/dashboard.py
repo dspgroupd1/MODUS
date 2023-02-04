@@ -13,10 +13,6 @@ from dash import dcc, html
 import dash_dangerously_set_inner_html
 
 
-# import numpy as np
-# from datetime import datetime
-# import re
-
 app = dash.Dash(
     __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}],
 )
@@ -62,9 +58,8 @@ app.layout = html.Div(
                         html.Img(
                             src=app.get_asset_url("logo-4nps.png"),
                             id="plotly-image2",
-                            style={"height": "100px", "width": "200px","margin-bottom": "20px", 'float': 'right', 'right': 0},
+                            style={"height": "100px", "width": "200px","margin-bottom": "20px", 'position': 'absolute', 'float': 'right', 'right': 0},
                         ),
-                        # html.Img(src='your_image_url.png', style={'float': 'right', 'position': 'fixed', 'right': 0, 'top': 0})
                     ],
                     className="one-third column",
                 ),
@@ -172,7 +167,7 @@ app.layout = html.Div(
                             className="row container-display",
                         ),
                         html.Div(
-                            [dcc.Graph(id="count_graph", figure = fig_pie_chart, style={"width": '100vh', 'height': '50vh', 'top': '0px', 'right': '0px', 'position': 'static'})],
+                            [dcc.Graph(id="count_graph", figure = fig_pie_chart, style={"width": '90vh', 'height': '50vh', 'top': '0px', 'right': '0px', 'position': 'static'})],
                             id="countGraphContainer",
                             className="pretty_container",
                         ),
@@ -191,11 +186,6 @@ app.layout = html.Div(
                     [dcc.Graph(id = "drugsforum_graph", style={'width': '170vh'})],
                     className="pretty_container seven columns",
                 ),
-                # html.Div(
-                #         id='description_drugsforum',
-                #         children='The plot above shows the number of views of posts on drugsforum.nl containing the drug of interest.  The number of views was the best performing popularity indicator for this source, see report. Instead of monthly data, a moving average is used to increase interpretability.',
-                #         style={'textAlign': 'center'}
-                # ),
             ],
             className="row flex-display",
         ),
@@ -205,12 +195,6 @@ app.layout = html.Div(
                     [dcc.Graph(id="reddit_graph", style={'width': '170vh'})],
                     className="pretty_container seven columns",
                 ),
-                # html.Div(
-                #         id='description_reddit',
-                #         children='This plot shows the number of mentions in posts on Reddit containing the drug of interest.  The number of mentions was the best performing popularity indicator for this source, see report. Instead of monthly data, a moving average is used to increase interpretability.',
-                #         style={'textAlign': 'center'}
-                # ),
-
             ],
             className="row flex-display",
         ),
@@ -225,8 +209,6 @@ app.layout = html.Div(
 
 )
 
-#-------------------------------
-#Helper functions
 
 #-------------------------------
 #CALLBACKS
