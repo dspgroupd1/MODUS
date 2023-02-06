@@ -4,6 +4,11 @@
 
  **Description**:  The project provides set of function to run the dashboard for  analyzing the popularity of NPS
 
+Explanation video:
+https://youtu.be/vtTDSOf4pHo
+
+Teaser video:
+https://youtu.be/zbyykZzyDMk
 
 # CONTENT:
 
@@ -20,8 +25,7 @@ the version of pandas supported is 1.4.2
 ## directory and file structure
 
 ```
-
-├── code                   - code of scrapers and different tools
+├── code                  - scrapers and different tools
 │   ├── analysis
 │   │   ├── timeseries
 │   │   └── timeseries_info
@@ -39,10 +43,10 @@ the version of pandas supported is 1.4.2
 │   │       ├── comments
 │   │       └── threads
 │   └── trimbos
-├── final_dashboard_D1
-│   ├── assets
-│   └── nl_corpus
-└── literature_review      - list of reviewed articles and their contents
+└── final_dashboard_D1
+    ├── assets
+    └── nl_corpus
+
 
 ```
 
